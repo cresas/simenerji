@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Güç ve Enerji Simülasyonu - Fizik Eğitimi</title>
+    <meta name="description" content="İş, enerji ve güç kavramlarını interaktif animasyonlarla öğrenin. Aynı işi farklı sürelerde yapmanın güce etkisini keşfedin.">
+    <meta name="author" content="MiniMax Agent">
+    <meta name="keywords" content="fizik, güç, enerji, iş, simülasyon, eğitim, interaktif">
+    
+    <style>
+        /* CSS Variables for theme */
+        :root {
+            --background: 0 0% 98%;
+            --foreground: 222 47% 11%;
+            --card: 0 0% 100%;
+            --card-foreground: 222 47% 11%;
+            --primary: 217 91% 60%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222 47% 11%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215 16% 47%;
+            --accent: 142 76% 36%;
+            --accent-foreground: 0 0% 100%;
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 0 0% 100%;
+            --border: 214 32% 91%;
+            --input: 214 32% 91%;
+            --ring: 217 91% 60%;
+            --radius: 0.75rem;
+            --chart-1: 217 91% 60%;
+            --chart-2: 142 76% 36%;
+            --chart-3: 280 80% 50%;
+            --building: 30 20% 85%;
+            --stairs: 25 15% 75%;
+        }
+
+        .dark {
+            --background: 222 47% 11%;
+            --foreground: 210 40% 98%;
+            --card: 222 47% 11%;
+            --card-foreground: 210 40% 98%;
+            --primary: 217 91% 60%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 217 33% 18%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217 33% 18%;
+            --muted-foreground: 215 20% 65%;
+            --accent: 142 76% 36%;
+            --accent-foreground: 0 0% 100%;
+            --destructive: 0 63% 31%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217 33% 18%;
+            --input: 217 33% 18%;
+            --ring: 217 91% 60%;
+            --building: 30 15% 25%;
+            --stairs: 25 10% 20%;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+        }
+
+        /* Custom spacing */
+        .space-y-0\.5 > * + * { margin-top: 2px; } /* 2px */
+
+        /* Utility classes */
+        .container {
+            max-width: calc(1920px * 0.90);
+            margin: 0 auto;
+            padding: 2px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-base {
+            font-size: 1rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+
+        .text-4xl {
+            font-size: 2.25rem;
+        }
+
+        .text-5xl {
+            font-size: 3rem;
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .text-primary {
+            color: hsl(var(--primary));
+        }
+
+        .text-accent {
+            color: hsl(var(--accent));
+        }
+
+        .text-foreground {
+            color: hsl(var(--foreground));
+        }
+
+        /* Card component */
+        .card {
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+
+        .mb-2 { margin-bottom: 2px; }
+        .mb-3 { margin-bottom: 2px; }
+        .mb-4 { margin-bottom: 2px; }
+        .mb-6 { margin-bottom: 2px; }
+        .mb-8 { margin-bottom: 2px; }
+        .mb-4 { margin-bottom: 2px; }
+
+        .mt-4 { margin-top: 2px; }
+        .mt-6 { margin-top: 2px; }
+
+        .mt-1 { margin-top: 2px; }
+        .mt-2 { margin-top: 2px; }
+        .mt-3 { margin-top: 2px; }
+
+        .space-y-2 > * + * { margin-top: 2px; }
+        .space-y-4 > * + * { margin-top: 2px; }
+        .space-y-6 > * + * { margin-top: 2px; }
+
+        .flex { display: flex; }
+        .flex-1 { flex: 1; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-end { justify-content: flex-end; }
+
+        .gap-1 { gap: 2px; }
+        .gap-2 { gap: 2px; }
+        .gap-3 { gap: 2px; }
+        .gap-4 { gap: 2px; }
+        .gap-6 { gap: 2px; }
+
+        /* Grid */
+        .grid { display: grid; }
+        .lg\:grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Button */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            padding: 0.625rem 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-outline {
+            border: 1px solid hsl(var(--input));
+            background-color: hsl(var(--background));
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-icon {
+		<!--
+            width: 2.5rem;
+            height: 2.5rem;
+			-->
+        }
+
+        /* Slider */
+        .slider {
+            position: relative;
+            width: 100%;
+            touch-action: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .slider-track {
+            position: relative;
+            flex-grow: 1;
+            overflow: hidden;
+            border-radius: 9999px;
+            height: 0.25rem; /* Küçültülmüş */
+            background-color: hsl(var(--secondary));
+        }
+
+        .slider-range {
+            position: absolute;
+            height: 100%;
+            background-color: hsl(var(--primary));
+        }
+
+        .slider-thumb {
+            display: block;
+            width: 1rem; /* Küçültülmüş */
+            height: 1rem; /* Küçültülmüş */
+            border-radius: 50%;
+            border: 2px solid hsl(var(--primary));
+            background-color: hsl(var(--background));
+            box-shadow: 0 2px 10px 0 rgb(0 0 0 / 0.2);
+        }
+
+        .slider-thumb:focus {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        /* Background gradients */
+        .bg-background { background-color: hsl(var(--background)); }
+        .bg-primary\/5 { background-color: hsl(var(--primary) / 0.05); }
+        .bg-muted { background-color: hsl(var(--muted)); }
+        .bg-muted\/50 { background-color: hsl(var(--muted) / 0.5); }
+        .bg-primary\/10 { background-color: hsl(var(--primary) / 0.1); }
+        .bg-accent\/10 { background-color: hsl(var(--accent) / 0.1); }
+        .bg-accent\/5 { background-color: hsl(var(--accent) / 0.05); }
+
+        /* Border */
+        .border { border: 1px solid hsl(var(--border)); }
+        .border-2 { border: 2px solid; }
+        .border-border { border-color: hsl(var(--border)); }
+
+        /* Rounded */
+        .rounded { border-radius: var(--radius); }
+        .rounded-lg { border-radius: calc(var(--radius) * 1.333); }
+        .rounded-full { border-radius: 9999px; }
+
+        /* Font family */
+        .font-mono {
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, 'Inconsolata', 'Fira Code', monospace;
+        }
+
+        /* Background */
+        .bg-gradient-to-b {
+            background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+        }
+
+        .from-sky-100 { --tw-gradient-from: #e0f2fe; }
+        .to-sky-50 { --tw-gradient-to: #f0f9ff; }
+        .dark\:from-sky-900\/20:is(.dark) { --tw-gradient-from: rgb(7 89 133 / 0.2); }
+        .dark\:to-sky-950\/20:is(.dark) { --tw-gradient-to: rgb(2 6 23 / 0.2); }
+
+        /* Hover */
+        .hover\:bg-accent:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .md\:p-8 { padding: 2rem; }
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .md\:text-5xl { font-size: 3rem; }
+            .md\:text-lg { font-size: 1.125rem; }
+        }
+
+        @media (max-width: 1023px) {
+            .lg\:grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation */
+        .transition-all {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .duration-500 {
+            transition-duration: 500ms;
+        }
+
+        /* Width */
+        .w-full { width: 100%; }
+        .w-4 { width: 1rem; }
+
+        /* Height */
+        .min-h-screen { min-height: 100vh; }
+        .h-full { height: 100%; }
+        .h-12 { height: 3rem; }
+
+        /* Border colors */
+        .border-primary\/20 { border-color: hsl(var(--primary) / 0.2); }
+        .border-accent\/20 { border-color: hsl(var(--accent) / 0.2); }
+
+        /* Text colors for dark mode */
+        .dark\:text-yellow-100:is(.dark) { color: #fef3c7; }
+        .dark\:bg-yellow-900\/20:is(.dark) { background-color: rgb(146 64 14 / 0.2); }
+        .dark\:border-yellow-800:is(.dark) { border-color: rgb(133 77 14); }
+
+        /* Text color variants */
+        .text-yellow-900 { color: #713f12; }
+        .bg-yellow-50 { background-color: #fffbeb; }
+        .border-yellow-200 { border-color: #fde68a; }
+
+        /* Position */
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .fixed { position: fixed; }
+
+        /* Overflow */
+        .overflow-hidden { overflow: hidden; }
+
+        /* Display */
+        .block { display: block; }
+
+        /* Z-index */
+        .z-50 { z-index: 50; }
+
+        /* Top, Right, Bottom, Left */
+        .top-0 { top: 0; }
+        .right-0 { right: 0; }
+        .bottom-0 { bottom: 0; }
+        .left-0 { left: 0; }
+
+        /* Custom styles for specific components */
+        .chart-bar {
+            transition: width 0.5s ease-in-out;
+        }
+
+        .chart-bar-gradient-primary {
+            background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+        }
+
+        .chart-bar-gradient-accent {
+            background: linear-gradient(to right, hsl(var(--accent)), hsl(var(--accent) / 0.8));
+        }
+
+        /* Animation keyframes */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* SVG text styling */
+        svg text {
+            font-family: inherit;
+        }
+
+        /* Mobil Buton Stili */
+        #show-results-btn {
+            position: fixed;
+            bottom: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: none; /* Başlangıçta gizli */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Lightbox Modal Stilleri */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .lightbox-content {
+            position: relative;
+            background-color: hsl(var(--card));
+            margin: 2px auto;
+            padding: 0;
+            border-radius: var(--radius);
+            width: 80%;
+            max-width: 500px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .lightbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .lightbox-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .lightbox-close:hover {
+            background: hsl(var(--muted));
+            color: hsl(var(--foreground));
+        }
+
+        .lightbox-body {
+            padding: 1rem;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="min-h-screen" style="padding: 2px;" id="app">
+        <div class="container">
+            <header class="text-center mb-1">
+                <h1 class="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                    Günlük Hayatta Güç ve Enerji Kullanımı
+                </h1>
+                <p class="text-base text-muted-foreground">
+                    Aynı işi farklı sürede yapmanın güce etkisini keşfedin
+                </p>
+            </header>
+
+            <div class="grid lg:grid-cols-4 gap-1 mb-1">
+                <div class="lg:col-span-1">
+                    <div class="card p-2">
+                        <h2 class="text-sm font-semibold text-primary mb-2">⚙️ Parametreler</h2>
+                        
+                        <div class="space-y-2">
+                            <div class="space-y-0.5">
+                                <div class="flex justify-between items-center">
+                                    <label for="mass" class="text-sm font-medium">
+                                        TV Kütlesi (kg)
+                                    </label>
+                                    <span class="text-xs font-mono bg-muted px-2 py-1 rounded" id="mass-display">
+                                        40 kg
+                                    </span>
+                                </div>
+                                <div class="slider">
+                                    <div class="slider-track">
+                                        <div class="slider-range" id="mass-range"></div>
+                                    </div>
+                                    <input type="range" min="20" max="80" step="5" value="40" id="mass-slider" class="slider-thumb" style="position: absolute; width: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+
+                            <div class="space-y-0.5">
+                                <div class="flex justify-between items-center">
+                                    <label for="height" class="text-sm font-medium">
+                                        Bina Yüksekliği (m)
+                                    </label>
+                                    <span class="text-xs font-mono bg-muted px-2 py-1 rounded" id="height-display">
+                                        12 m
+                                    </span>
+                                </div>
+                                <div class="slider">
+                                    <div class="slider-track">
+                                        <div class="slider-range" id="height-range"></div>
+                                    </div>
+                                    <input type="range" min="8" max="20" step="2" value="12" id="height-slider" class="slider-thumb" style="position: absolute; width: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+
+                            <div class="space-y-0.5">
+                                <div class="flex justify-between items-center">
+                                    <label for="timePulley" class="text-sm font-medium">
+                                        Makara Süresi (s)
+                                    </label>
+                                    <span class="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded" id="timePulley-display">
+                                        120 s
+                                    </span>
+                                </div>
+                                <div class="slider">
+                                    <div class="slider-track">
+                                        <div class="slider-range" id="timePulley-range"></div>
+                                    </div>
+                                    <input type="range" min="30" max="300" step="10" value="120" id="timePulley-slider" class="slider-thumb" style="position: absolute; width: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+
+                            <div class="space-y-0.5">
+                                <div class="flex justify-between items-center">
+                                    <label for="timeStairs" class="text-sm font-medium">
+                                        Merdiven Süresi (s)
+                                    </label>
+                                    <span class="text-xs font-mono bg-accent/10 text-accent px-2 py-1 rounded" id="timeStairs-display">
+                                        300 s
+                                    </span>
+                                </div>
+                                <div class="slider">
+                                    <div class="slider-track">
+                                        <div class="slider-range" id="timeStairs-range"></div>
+                                    </div>
+                                    <input type="range" min="60" max="600" step="20" value="300" id="timeStairs-slider" class="slider-thumb" style="position: absolute; width: 100%; opacity: 0; cursor: pointer;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-primary flex-1 text-xs py-2" id="start-btn">
+                                ▶️ Animasyon
+                            </button>
+                            <button class="btn btn-outline btn-icon" id="reset-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                                    <path d="M21 3v5h-5"/>
+                                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                                    <path d="M3 21v-5h5"/>
+                                </svg>
+                            </button>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Animasyon Alanı - Ortalanmış -->
+                <div class="lg:col-span-3">
+                    <div class="card p-2">
+                        <h2 class="text-lg font-semibold text-primary mb-3 text-center">🎯 Simülasyon</h2>
+                        <div id="animation-container" class="flex justify-center max-w-4xl mx-auto">
+                        </div>
+                        
+                        <!-- Animasyon bittikten sonra gösterilecek sonuçlar butonu -->
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" id="show-results-after-animation" style="display: none;">
+                                📊 Sonuçları Görüntüle
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formüller -->
+            <div class="card p-2 bg-primary/5 mb-1">
+                <h3 class="font-semibold text-sm mb-1 text-center">📐 Fizik Formülleri</h3>
+                <div class="grid md:grid-cols-2 gap-3 text-sm max-w-xl mx-auto">
+                    <div class="text-center">
+                        <p class="font-mono bg-background px-2 py-2 rounded-lg text-sm">
+                            İş (W) = m × g × h
+                        </p>
+                        <p class="text-muted-foreground mt-1 text-xs">
+                            Kütle × Yerçekimi × Yükseklik
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-mono bg-background px-2 py-2 rounded-lg text-sm">
+                            Güç (P) = W / t
+                        </p>
+                        <p class="text-muted-foreground mt-1 text-xs">
+                            İş / Zaman
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <button class="btn btn-primary" id="show-results-btn">
+        Sonuçları Gör
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6"/>
+        </svg>
+    </button>
+
+    <!-- Lightbox Modal -->
+    <div id="results-modal" class="lightbox-modal">
+        <div class="lightbox-content">
+            <div class="lightbox-header">
+                <h2 class="text-2xl font-semibold text-primary" id="results-header">🎯 Simülasyon Sonuçları</h2>
+                <button class="lightbox-close" onclick="closeResultsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m18 6-12 12"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="lightbox-body">
+                <div class="space-y-4">
+                    <div class="bg-muted/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-muted-foreground">Yapılan İş (Her İkisi İçin)</span>
+                            <span class="text-2xl font-bold text-foreground" id="work-display">
+                                4704 J
+                            </span>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-2">
+                            Aynı TV, aynı yükseklik → İş aynı
+                        </p>
+                    </div>
+
+                    <div class="bg-primary/5 rounded-lg p-4 border-2 border-primary/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-primary">Makara ile Güç (Duru)</span>
+                            <span class="text-2xl font-bold text-primary" id="powerPulley-display">
+                                39,2 W
+                            </span>
+                        </div>
+                        <p class="text-xs text-muted-foreground" id="pulley-time-display">
+                            Süre: 120s = 2,0 dakika
+                        </p>
+                    </div>
+
+                    <div class="bg-accent/5 rounded-lg p-4 border-2 border-accent/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-accent">Merdiven ile Güç (Alper)</span>
+                            <span class="text-2xl font-bold text-accent" id="powerStairs-display">
+                                15,7 W
+                            </span>
+                        </div>
+                        <p class="text-xs text-muted-foreground" id="stairs-time-display">
+                            Süre: 300s = 5,0 dakika
+                        </p>
+                    </div>
+
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4" id="insight-box">
+                        <p class="text-sm font-medium text-yellow-900">
+                            💡 Anahtar Fikir: Aynı iş, daha kısa sürede yapılırsa daha fazla güç gerekir!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Physics Simulation JavaScript
+        class PhysicsSimulation {
+            constructor() {
+                // Initial values
+                this.mass = 40; // kg
+                this.height = 12; // m
+                this.timePulley = 120; // s
+                this.timeStairs = 300; // s
+                this.isAnimating = false;
+                
+                this.g = 9.8; // m/s²
+
+                // 1024px, lg:grid-cols-2'nin kırılma noktasıdır
+                this.isMobile = window.innerWidth <= 1024; 
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateCalculations();
+
+                this.renderAnimation();
+
+                // Modal başlangıçta kapalı
+                this.closeResultsModal();
+            }
+
+            setupEventListeners() {
+                // Slider event listeners
+                document.getElementById('mass-slider').addEventListener('input', (e) => {
+                    this.mass = parseInt(e.target.value);
+                    this.updateDisplay('mass', this.mass);
+                    this.updateCalculations();
+                });
+
+                document.getElementById('height-slider').addEventListener('input', (e) => {
+                    this.height = parseInt(e.target.value);
+                    this.updateDisplay('height', this.height);
+                    this.updateCalculations();
+                    // Yükseklik değiştiğinde binayı ve animasyonu yeniden çiz
+                    this.renderAnimation(); 
+                });
+
+                document.getElementById('timePulley-slider').addEventListener('input', (e) => {
+                    this.timePulley = parseInt(e.target.value);
+                    this.updateDisplay('timePulley', this.timePulley);
+                    this.updateCalculations();
+                });
+
+                document.getElementById('timeStairs-slider').addEventListener('input', (e) => {
+                    this.timeStairs = parseInt(e.target.value);
+                    this.updateDisplay('timeStairs', this.timeStairs);
+                    this.updateCalculations();
+                });
+
+                // Button event listeners
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    this.startAnimation();
+                });
+
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    this.reset();
+                });
+
+                // Mobil Buton Eventi
+                document.getElementById('show-results-btn').addEventListener('click', () => {
+                    this.showResultsModal();
+                });
+
+                // Animasyon sonrası sonuçlar butonu
+                document.getElementById('show-results-after-animation').addEventListener('click', () => {
+                    this.showResultsModal();
+                });
+
+                // Modal dışına tıklanınca kapanması için
+                document.getElementById('results-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'results-modal') {
+                        this.closeResultsModal();
+                    }
+                });
+
+                // Update slider backgrounds
+                this.updateSliderBackgrounds();
+            }
+
+            updateSliderBackgrounds() {
+                const sliders = ['mass', 'height', 'timePulley', 'timeStairs'];
+                sliders.forEach(slider => {
+                    const input = document.getElementById(`${slider}-slider`);
+                    const range = document.getElementById(`${slider}-range`);
+                    const percentage = ((parseInt(input.value) - parseInt(input.min)) / (parseInt(input.max) - parseInt(input.min))) * 100;
+                    range.style.width = `${percentage}%`;
+                });
+            }
+
+            updateDisplay(type, value) {
+                const unit = type.includes('time') ? 's' : (type === 'height' ? 'm' : 'kg');
+                document.getElementById(`${type}-display`).textContent = `${value} ${unit}`;
+                this.updateSliderBackgrounds();
+            }
+
+            calculate() {
+                // Physics calculations
+                this.work = this.mass * this.g * this.height; // Joules
+                this.powerPulley = this.work / this.timePulley; // Watts
+                this.powerStairs = this.work / this.timeStairs; // Watts
+            }
+
+            updateCalculations() {
+                this.calculate();
+                
+                // Update displays
+                document.getElementById('work-display').textContent = `${this.work.toFixed(0).replace('.', ',')} J`;
+                document.getElementById('powerPulley-display').textContent = `${this.powerPulley.toFixed(1).replace('.', ',')} W`;
+                document.getElementById('powerStairs-display').textContent = `${this.powerStairs.toFixed(1).replace('.', ',')} W`;
+                
+                document.getElementById('pulley-time-display').textContent = `Süre: ${this.timePulley}s = ${(this.timePulley / 60).toFixed(1).replace('.', ',')} dakika`;
+                document.getElementById('stairs-time-display').textContent = `Süre: ${this.timeStairs}s = ${(this.timeStairs / 60).toFixed(1).replace('.', ',')} dakika`;
+                
+                // Update insight
+                this.updateInsight();
+                
+                // Update chart
+
+            }
+
+            updateInsight() {
+                const insightBox = document.getElementById('insight-box');
+                let insight = '';
+                
+                if (this.powerPulley > this.powerStairs) {
+                    insight = `💡 Anahtar Fikir: Makara yöntemi merdiven yöntemine göre ${(this.powerPulley / this.powerStairs).toFixed(2).replace('.', ',')}x daha fazla güç kullanıyor çünkü işi daha kısa sürede yapıyor!`;
+                } else {
+                    insight = `💡 Anahtar Fikir: Merdiven yöntemi makara yöntemine göre ${(this.powerStairs / this.powerPulley).toFixed(2).replace('.', ',')}x daha fazla güç kullanıyor çünkü işi daha kısa sürede yapıyor!`;
+                }
+                
+                insightBox.innerHTML = `<p class="text-sm font-medium text-yellow-900">${insight}</p>`;
+            }
+
+
+
+            renderAnimation() {
+                const floors = Math.floor(this.height / 3);
+                const buildingHeight = 400;
+                const floorHeight = buildingHeight / floors;
+                const stepsPerFloor = 8;
+
+                // === YENİ DÜZEN: Y Koordinatları ===
+                const topY = 500 - buildingHeight - 50; // 50
+                const bottomY = 500 - 50; // 450
+                const midY = (topY + bottomY) / 2; // 250
+                const groundY = 450; // Zemin seviyesi
+
+                // === YENİ DÜZEN: 'h' oku SAĞDA ===
+                const h_marker_svg = `
+                    <g id="height-marker">
+                        <line x1="430" y1="${topY}" x2="430" y2="${bottomY}" stroke="hsl(var(--foreground))" stroke-width="2" />
+                        <line x1="425" y1="${topY + 5}" x2="430" y2="${topY}" stroke="hsl(var(--foreground))" stroke-width="2" />
+                        <line x1="435" y1="${topY + 5}" x2="430" y2="${topY}" stroke="hsl(var(--foreground))" stroke-width="2" />
+                        <line x1="425" y1="${bottomY - 5}" x2="430" y2="${bottomY}" stroke="hsl(var(--foreground))" stroke-width="2" />
+                        <line x1="435" y1="${bottomY - 5}" x2="430" y2="${bottomY}" stroke="hsl(var(--foreground))" stroke-width="2" />
+                        <text x="445" y="${midY}" font-size="20" font-style="italic" fill="hsl(var(--foreground))" text-anchor="middle" dominant-baseline="middle">h</text>
+                    </g>
+                `;
+
+                // === YENİ DÜZEN: Mobil viewBox ===
+                const viewBox = this.isMobile ? "80 0 370 500" : "0 0 600 500";
+                
+                const svg = `
+                    <div class="w-full bg-gradient-to-b from-sky-100 to-sky-50 rounded-lg p-6 relative overflow-hidden">
+                        <svg width="100%" height="500" viewBox="${viewBox}" class="mx-auto">
+                            
+                            ${h_marker_svg}
+
+                            <rect x="100" y="${groundY}" width="380" height="50" fill="hsl(var(--building))" />
+
+                            <rect
+                                x="180"
+                                y="${topY}"
+                                width="240"
+                                height="${buildingHeight}"
+                                fill="hsl(var(--building))"
+                                stroke="hsl(var(--border))"
+                                stroke-width="2"
+                            />
+
+                            ${Array.from({ length: floors }).map((_, i) => {
+                                const y = 500 - 50 - (i + 1) * floorHeight;
+                                return `
+                                    <g>
+                                        <line
+                                            x1="180"
+                                            y1="${y}"
+                                            x2="420"
+                                            y2="${y}"
+                                            stroke="hsl(var(--border))"
+                                            stroke-width="2"
+                                        />
+                                        
+                                        ${Array.from({ length: 8 }).map((_, stepIndex) => {
+                                            const stepWidth = 15;
+                                            const stepHeight = floorHeight / 8;
+                                            const stepX = 200 + stepIndex * stepWidth;
+                                            const stepY = y + (7 - stepIndex) * stepHeight;
+                                            
+                                            return `
+                                                <rect
+                                                    x="${stepX}"
+                                                    y="${stepY}"
+                                                    width="${stepWidth}"
+                                                    height="${stepHeight}"
+                                                    fill="hsl(var(--stairs))"
+                                                    stroke="hsl(var(--border))"
+                                                    stroke-width="1"
+                                                />
+                                            `;
+                                        }).join('')}
+                                    </g>
+                                `;
+                            }).join('')}
+
+                            <g>
+                                <line x1="180" y1="${topY + 10}" x2="150" y2="${topY + 10}" stroke="hsl(var(--foreground))" stroke-width="4" />
+                                
+                                <circle cx="150" cy="${topY}" r="20" fill="hsl(var(--muted))" stroke="hsl(var(--foreground))" stroke-width="3" />
+                                <circle cx="150" cy="${topY}" r="8" fill="hsl(var(--foreground))" />
+                                
+                                <path d="M 130 ${topY} A 20 20 0 0 1 170 ${topY}" stroke="hsl(var(--primary))" stroke-width="3" fill="none" />
+                                
+                                <line
+                                    id="pulley-rope"
+                                    x1="170"
+                                    y1="${topY}"
+                                    x2="170"
+                                    y2="450"
+                                    stroke="hsl(var(--primary))"
+                                    stroke-width="3"
+                                />
+                                
+                                <line
+                                    id="pulley-rope-duru"
+                                    x1="130"
+                                    y1="${topY}"
+                                    x2="130"
+                                    y2="454" 
+                                    stroke="hsl(var(--primary))"
+                                    stroke-width="3"
+                                />
+                                <circle cx="130" cy="462" r="8" fill="hsl(var(--muted))" stroke="hsl(var(--foreground))" stroke-width="2" />
+                                <line id="winch-handle" x1="130" y1="462" x2="130" y2="455" stroke="hsl(var(--foreground))" stroke-width="3" />
+                                </g>
+                            <g id="tv-pulley" transform="translate(150, 450)">
+                                <rect x="0" y="0" width="40" height="30" fill="hsl(var(--foreground))" rx="2" />
+                                <rect x="5" y="5" width="30" height="18" fill="hsl(var(--primary))" rx="1" />
+                                <text x="20" y="28" font-size="8" fill="white" text-anchor="middle">TV</text>
+                            </g>
+
+                            <g id="person-pulley" transform="translate(125, 450)">
+                                <circle cx="10" cy="0" r="8" fill="hsl(var(--chart-1))" />
+                                <line x1="10" y1="8" x2="10" y2="20" stroke="hsl(var(--chart-1))" stroke-width="3" />
+                                <line 
+                                    id="pulley-arm-left"
+                                    x1="10" y1="12" 
+                                    x2="5" y2="12"  /* x2/y2 (130, 462)'ye denk gelir */
+                                    stroke="hsl(var(--chart-1))" 
+                                    stroke-width="3" 
+                                />
+                                <line 
+                                    id="pulley-arm-right"
+                                    x1="10" y1="12" 
+                                    x2="5" y2="12" 
+                                    stroke="hsl(var(--chart-1))" 
+                                    stroke-width="3" 
+                                />
+                                <line x1="10" y1="20" x2="5" y2="30" stroke="hsl(var(--chart-1))" stroke-width="3" />
+                                <line x1="10" y1="20" x2="15" y2="30" stroke="hsl(var(--chart-1))" stroke-width="3" />
+                                <text x="10" y="45" font-size="14" fill="hsl(var(--chart-1))" text-anchor="middle" font-weight="bold">Duru</text>
+                            </g>
+                            <g id="person-stairs" transform="translate(215, 450)">
+                                <rect x="-8" y="-38" width="16" height="12" fill="hsl(var(--foreground))" rx="1" />
+                                <rect x="-6" y="-36" width="12" height="8" fill="hsl(var(--accent))" rx="1" />
+                                
+                                <circle cx="0" cy="-22" r="6" fill="hsl(var(--chart-2))" />
+                                <line x1="0" y1="-16" x2="0" y2="-2" stroke="hsl(var(--chart-2))" stroke-width="2.5" />
+                                <line x1="0" y1="-12" x2="-6" y2="-28" stroke="hsl(var(--chart-2))" stroke-width="2.5" />
+                                <line x1="0" y1="-12" x2="6" y2="-28" stroke="hsl(var(--chart-2))" stroke-width="2.5" />
+                                <line x1="0" y1="-2" x2="-4" y2="8" stroke="hsl(var(--chart-2))" stroke-width="2.5" />
+                                <line x1="0" y1="-2" x2="4" y2="8" stroke="hsl(var(--chart-2))" stroke-width="2.5" />
+                                <text x="0" y="22" font-size="14" fill="hsl(var(--chart-2))" text-anchor="middle" font-weight="bold">Alper</text>
+                            </g>
+                        </svg>
+                    </div>
+                `;
+
+                document.getElementById('animation-container').innerHTML = svg;
+            }
+
+            startAnimation() {
+                if (this.isAnimating) return;
+                
+                this.isAnimating = true;
+                document.getElementById('start-btn').textContent = 'Animasyon Oynatılıyor...';
+                document.getElementById('start-btn').disabled = true;
+
+                // Add progress indicators
+                this.addProgressIndicators();
+
+                // Mobil ise animasyona kaydır
+                if (this.isMobile) {
+                    document.getElementById('animation-container').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+
+                const startTime = Date.now();
+                const pulleyDuration = this.timePulley * 20; // Scale for visible animation
+                const stairsDuration = this.timeStairs * 20;
+                const totalDuration = Math.max(pulleyDuration, stairsDuration);
+
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    
+                    // Update pulley progress
+                    const pulleyProgress = Math.min((elapsed / pulleyDuration) * 100, 100);
+                    this.updatePulleyAnimation(pulleyProgress, elapsed);
+                    
+                    // Update stairs progress
+                    const stairsProgress = Math.min((elapsed / stairsDuration) * 100, 100);
+                    this.updateStairsAnimation(stairsProgress, elapsed);
+                    
+                    // Update progress indicators
+                    this.updateProgress(pulleyProgress, stairsProgress);
+                    
+                    if (elapsed < totalDuration) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        this.stopAnimation();
+                    }
+                };
+
+                requestAnimationFrame(animate);
+            }
+
+            updatePulleyAnimation(progress, elapsed) {
+                // Update TV position
+                const tvElement = document.getElementById('tv-pulley');
+                if (tvElement) {
+                    const buildingHeight = 400;
+                    const topY = 500 - buildingHeight - 50; // 50
+                    let yPos;
+                    if (progress >= 100) {
+                        // Final position: TV at the top
+                        yPos = topY;
+                    } else {
+                        // During animation: 450 -> 50 (400 pixels up)
+                        yPos = 450 - (buildingHeight * progress / 100);
+                    }
+                    // === YENİ DÜZEN: TV X Konumu ===
+                    tvElement.setAttribute('transform', `translate(150, ${yPos})`);
+                }
+
+                // Update rope
+                const ropeElement = document.getElementById('pulley-rope');
+                if (ropeElement) {
+                    const buildingHeight = 400;
+                    const topY = 500 - buildingHeight - 50; // 50
+                    let y2;
+                    if (progress >= 100) {
+                        // Final position: rope to the top
+                        y2 = topY;
+                    } else {
+                        // During animation: 450 -> 50 (400 pixels up)
+                        y2 = 450 - (buildingHeight * progress / 100);
+                    }
+                    ropeElement.setAttribute('y2', y2.toString());
+                }
+
+                // === YENİ: Duru'nun Vinç Çevirme Animasyonu ===
+                const winchHandle = document.getElementById('winch-handle');
+                const armLeft = document.getElementById('pulley-arm-left');
+                const armRight = document.getElementById('pulley-arm-right');
+
+                if (winchHandle && armLeft && armRight) {
+                    const winchCenterX = 130;
+                    const winchCenterY = 462;
+                    const handleRadius = 7; // Vinç kolu uzunluğu
+                    const duruBaseX = 125;
+                    const duruBaseY = 450;
+                    
+                    if (progress >= 100) {
+                        // Animasyon bitti, kolu sıfırla (yukarıda)
+                        const handleX = winchCenterX;
+                        const handleY = winchCenterY - handleRadius;
+                        winchHandle.setAttribute('x2', handleX);
+                        winchHandle.setAttribute('y2', handleY);
+                        
+                        // Kolları sıfırla (Duru'nun koordinat sistemine göre)
+                        const armTargetX = handleX - duruBaseX;
+                        const armTargetY = handleY - duruBaseY;
+                        armLeft.setAttribute('x2', armTargetX);
+                        armLeft.setAttribute('y2', armTargetY);
+                        armRight.setAttribute('x2', armTargetX);
+                        armRight.setAttribute('y2', armTargetY);
+
+                    } else {
+                        // Animasyon devam ediyor, kolu döndür
+                        const angle = (elapsed / 400) * Math.PI * 2; // 400ms'de bir tur
+                        
+                        const handleX = winchCenterX + handleRadius * Math.sin(angle);
+                        const handleY = winchCenterY - handleRadius * Math.cos(angle);
+                        
+                        winchHandle.setAttribute('x2', handleX.toString());
+                        winchHandle.setAttribute('y2', handleY.toString());
+
+                        // Duru'nun kollarını vinç koluna bağla (Duru'nun kendi koordinat sistemine göre)
+                        const armTargetX = handleX - duruBaseX;
+                        const armTargetY = handleY - duruBaseY;
+                        
+                        // İki kolu da aynı noktaya (vinç koluna) bağla
+                        armLeft.setAttribute('x2', armTargetX.toString());
+                        armLeft.setAttribute('y2', armTargetY.toString());
+                        armRight.setAttribute('x2', armTargetX.toString());
+                        armRight.setAttribute('y2', armTargetY.toString());
+                    }
+                }
+            }
+
+
+            updateStairsAnimation(progress, elapsed) {
+                const personElement = document.getElementById('person-stairs');
+                if (personElement) {
+                    const legs = personElement.querySelectorAll('line');
+                    const buildingHeight = 400;
+                    const topY = 500 - buildingHeight - 50; // -50'ye düşürdük ki Alper kesilmesin
+
+                    if (progress >= 100) {
+                        // Final position: person at the top of building
+                        personElement.setAttribute('transform', `translate(355, ${topY})`);
+                        
+                        // Bacakları seçmek için doğru kontrol (>= 5) ve doğru indeksler (3, 4)
+                        if (legs.length >= 5) {
+                            legs[3].setAttribute('x2', '-4');
+                            legs[3].setAttribute('y2', '8');
+                            legs[4].setAttribute('x2', '4');
+                            legs[4].setAttribute('y2', '8');
+                        }
+                    } else {
+                        // During animation - walking up stairs
+                        const floors = Math.floor(this.height / 3);
+                        const floorHeight = buildingHeight / floors;
+                        const stepsPerFloor = 8;
+                        const totalSteps = floors * stepsPerFloor;
+                        
+                        const currentStep = Math.floor((progress / 100) * totalSteps);
+                        const currentFloor = Math.floor(currentStep / stepsPerFloor);
+                        const stepInFloor = currentStep % stepsPerFloor;
+                        
+                        const stepWidth = 15;
+                        const stepHeight = floorHeight / stepsPerFloor;
+                        const baseFloorY = 500 - 50 - floorHeight;
+                        
+                        const floorY = baseFloorY - (currentFloor * floorHeight);
+                        const stepX = 215 + stepInFloor * stepWidth;
+                        const stepY = floorY + (stepsPerFloor - 1 - stepInFloor) * stepHeight;
+                                                
+                        personElement.setAttribute('transform', `translate(${stepX}, ${stepY})`);
+                        
+                        // Bacakları seçmek için doğru kontrol (>= 5) ve doğru indeksler (3, 4)
+                        if (legs.length >= 5) {
+                            
+                            // Bacak animasyon genliği (* 5)
+                            const walkCycle = Math.sin((progress * 10) * Math.PI / 180) * 5;
+                            
+                            // Sol bacak (indeks 3)
+                            legs[3].setAttribute('x2', (-4 + walkCycle).toString());
+                            legs[3].setAttribute('y2', '8');
+                            
+                            // Sağ bacak (indeks 4) 
+                            legs[4].setAttribute('x2', (4 - walkCycle).toString());
+                            legs[4].setAttribute('y2', '8');
+                        }
+                    }
+                }
+            }
+
+            addProgressIndicators() {
+                // Add progress indicators during animation
+                const svg = document.querySelector('#animation-container svg');
+                if (svg) {
+                    // Remove existing progress indicators
+                    const existingPulleyText = svg.querySelector('#pulley-progress');
+                    const existingStairsText = svg.querySelector('#stairs-progress');
+                    if (existingPulleyText) existingPulleyText.remove();
+                    if (existingStairsText) existingStairsText.remove();
+                    
+                    
+                    // === YENİ DÜZEN: Metin Konumları ===
+                    const textY = "25"; // Gökyüzü alanı (Makara çarkı y=50'de başlar)
+                    
+                    const stairsX = this.isMobile ? "300" : "480";
+                    const stairsAnchor = this.isMobile ? "middle" : "start";
+                    
+                    const pulleyX = this.isMobile ? "150" : "50";
+                    const pulleyAnchor = this.isMobile ? "middle" : "start";
+                    // === DÜZEN SONU ===
+
+                    const pulleyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    pulleyText.setAttribute('x', pulleyX);
+                    pulleyText.setAttribute('y', textY);
+                    pulleyText.setAttribute('font-size', '14');
+                    pulleyText.setAttribute('fill', 'hsl(var(--chart-1))');
+                    pulleyText.setAttribute('font-weight', 'bold');
+                    pulleyText.setAttribute('id', 'pulley-progress');
+                    pulleyText.setAttribute('text-anchor', pulleyAnchor);
+                    
+                    const stairsText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    stairsText.setAttribute('x', stairsX);
+                    stairsText.setAttribute('y', textY);
+                    stairsText.setAttribute('font-size', '14');
+                    stairsText.setAttribute('fill', 'hsl(var(--chart-2))');
+                    stairsText.setAttribute('font-weight', 'bold');
+                    stairsText.setAttribute('id', 'stairs-progress');
+                    stairsText.setAttribute('text-anchor', stairsAnchor);
+                    
+                    svg.appendChild(pulleyText); // Makara (Duru) solda
+                    svg.appendChild(stairsText); // Merdiven (Alper) sağda
+                }
+            }
+
+            updateProgress(pulleyProgress, stairsProgress) {
+                // Bayrakları (🏁) metnin sonuna ekle
+                const pulleyText = document.getElementById('pulley-progress');
+                const stairsText = document.getElementById('stairs-progress');
+                
+                if (pulleyText) {
+                    let pText = `Makara: ${pulleyProgress.toFixed(0)}%`;
+                    if (pulleyProgress >= 100) {
+                        pText += ' 🏁'; // Bayrağı buraya ekle
+                    }
+                    pulleyText.textContent = pText;
+                }
+                if (stairsText) {
+                    let sText = `Merdiven: ${stairsProgress.toFixed(0)}%`;
+                    if (stairsProgress >= 100) {
+                        sText += ' 🏁'; // Bayrağı buraya ekle
+                    }
+                    stairsText.textContent = sText;
+                }
+            }
+
+            stopAnimation() {
+                this.isAnimating = false;
+                document.getElementById('start-btn').textContent = 'Animasyonu Başlat';
+                document.getElementById('start-btn').disabled = false;
+                
+                // Final animations: set to 100% completion
+                this.updatePulleyAnimation(100, 0);
+                this.updateStairsAnimation(100, 0);
+
+                // Final progress update to ensure flags are shown
+                this.updateProgress(100, 100);
+
+                // Sonuç Modalını Göster
+                this.showResultsModal();
+                
+                // Mobil ise "Sonuçları Gör" butonunu göster
+                if (this.isMobile) {
+                    document.getElementById('show-results-btn').style.display = 'inline-flex';
+                }
+                
+                // Yeni animasyon sonrası sonuçlar butonunu göster (her zaman)
+                document.getElementById('show-results-after-animation').style.display = 'inline-flex';
+            }
+
+            showResultsModal() {
+                document.getElementById('results-modal').style.display = 'block';
+            }
+
+            closeResultsModal() {
+                document.getElementById('results-modal').style.display = 'none';
+            }
+
+            reset() {
+                this.mass = 40;
+                this.height = 12;
+                this.timePulley = 120;
+                this.timeStairs = 300;
+                
+                // Update sliders
+                document.getElementById('mass-slider').value = '40';
+                document.getElementById('height-slider').value = '12';
+                document.getElementById('timePulley-slider').value = '120';
+                document.getElementById('timeStairs-slider').value = '300';
+                
+                // Update displays
+                this.updateDisplay('mass', 40);
+                this.updateDisplay('height', 12);
+                this.updateDisplay('timePulley', 120);
+                this.updateDisplay('timeStairs', 300);
+                
+                this.updateCalculations();
+                this.renderAnimation();
+                                
+                if (this.isAnimating) {
+                    this.stopAnimation();
+                }
+
+                // Sıfırlayınca Modalı ve Mobil Butonu Gizle
+                this.closeResultsModal();
+                if (this.isMobile) {
+                    document.getElementById('show-results-btn').style.display = 'none';
+                }
+                // Yeni animasyon sonrası butonu da gizle
+                document.getElementById('show-results-after-animation').style.display = 'none';
+            }
+        }
+
+        // Initialize the simulation when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.physicsSim = new PhysicsSimulation();
+        });
+
+        // Global modal functions
+        function closeResultsModal() {
+            if (window.physicsSim) {
+                window.physicsSim.closeResultsModal();
+            }
+        }
+    </script>
+</body>
+</html>
